@@ -1,0 +1,63 @@
+@startuml
+' Enable ER diagram notation
+skinparam linetype ortho
+
+entity profesores {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * dni : VARCHAR(8)
+  * nombres : VARCHAR(60)
+  * apellidos : VARCHAR(60)
+  * codigo : INTEGER
+  * correo : VARCHAR(50)
+  * correo_institucional : VARCHAR(50)
+}
+
+entity carreras {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * nombre : VARCHAR(30)
+  * codigo : INTEGER
+}
+
+entity cursos {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * codigo : INTEGER
+  * nombre : VARCHAR(40)
+  * carrera_id : INTEGER <<FK>>
+}
+
+entity secciones {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * codigo : INTEGER
+  * profesor_id : INTEGER <<FK>>
+  * curso_id : INTEGER <<FK>>
+}
+
+entity alumnos {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * dni : VARCHAR(8)
+  * nombres : VARCHAR(60)
+  * apellidos : VARCHAR(60)
+  * codigo : INTEGER
+  * correo : VARCHAR(50)
+  * correo_institucional : VARCHAR(50)
+}
+
+entity secciones_alumnos {
+  * id : INTEGER <<PK>> <<Auto>>
+  --
+  * alumno_id : INTEGER <<FK>>
+  * seccion_id : INTEGER <<FK>>
+}
+
+' Relationships
+carreras ||-o{ cursos : "1..n"
+cursos ||-o{ secciones : "1..n"
+profesores ||-o{ secciones : "1..n"
+secciones ||-o{ secciones_alumnos : "1..n"
+alumnos ||-o{ secciones_alumnos : "1..n"
+@enduml
