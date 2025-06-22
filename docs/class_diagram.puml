@@ -1,65 +1,87 @@
 @startuml
 
-class User {
-  - id: int
+class Employee {
+  - _id: ObjectId
+  - names: String
+  - lastNames: String
+  - created: DateTime
+  - updated: DateTime
+  - userId: int
+}
+
+class Priority {
+  - _id: ObjectId
   - name: String
-  - password: String
-  - activation_key: String
-  - reset_key: String
-  - email: String
-  - activated: Boolean
   - created: DateTime
   - updated: DateTime
 }
 
-class System {
-  - id: int
-  - name: String
-  - description: String
-  - repository: String
-  - created: DateTime
-  - updated: DateTime
-}
-
-class Role {
-  - id: int
+class Asset {
+  - _id: ObjectId
   - name: String
   - description: String
   - created: DateTime
   - updated: DateTime
-  - systemId: int
 }
 
-class Permission {
-  - id: int
+class Tag{
+  - _id: ObjectId
   - name: String
-  - description: String
   - created: DateTime
   - updated: DateTime
-  - roleId: int
 }
 
-class SystemUser {
-  - id: int
-  - system_id: int
-  - user_id: int
+class IssueState {
+  - _id: ObjectId
+  - name: String
+  - created: DateTime
+  - updated: DateTime
+}
+
+class Issue {
+  - _id: ObjectId
+  - name: String
+  - description: String
+  - issueStateId: ObjectId
+  - priorityId: ObjectId
+  - assetsIds: Array[ObjectIds]
+  - tagsIds: Array[ObjectIds]
+  - visorsIds: Array[ObjectIds]
+  - editorsIds: Array[ObjectIds]
+  - histories: Array[History]
+  - documents: Array[Document]
+  - reportered: ObjectId
+  - created: DateTime
+  - updated: DateTime
+}
+
+class History {
+  - _id: ObjectId
+  - description: String
+  - employeeId: ObjectId
+  - documents: Array[Document]
+  - created: DateTime
+  - updated: DateTim
+}
+
+class Document {
+  - _id: ObjectId
+  - name: String
+  - description: String
+  - mime: String
+  - url: String
   - created: DateTime
 }
 
-class SystemUserPermission {
-  - id: int
-  - created: DateTime
-  - system_id: int
-  - user_id: int
-  - permission_id: int
-}
-
-System "1" -- "m" Role
-Role "1" -- "m" Permission
-User "1" -- "m" SystemUser
-System "1" -- "m" SystemUser
-User "1" -- "m" SystemUserPermission
-System "1" -- "m" SystemUserPermission
-Permission "1" -- "m" SystemUserPermission
+Issue "n" *-- "1" Employee : crea
+Issue "n" *-- "n" Employee : mira
+Issue "n" *-- "n" Employee : edita
+Issue "n" *-- "1" IssueState : tiene
+Issue "n" *-- "1" Priority : tiene
+Issue "n" o-- "n" Asset : tiene
+Issue "n" o-- "n" Tag : tiene
+Issue "1" o-- "n" History : tiene
+Issue "1" o-- "n" Document : tiene
+History "1" o-- "n" Document : tiene
 
 @enduml
