@@ -1,4 +1,4 @@
-class TagController < ApplicationController
+class IssueStateController < ApplicationController
   before do
     public_routes = ['/roles']
     unless public_routes.include?(request.path_info) 
@@ -6,14 +6,14 @@ class TagController < ApplicationController
     end
   end
 
-  get '/apis/v1/tags' do
+  get '/apis/v1/issue-states' do
     # request
     response = {}
     status = 200
     # blogic
     begin
-      tags = Tag.all.to_a
-      response = tags
+      issue_states = IssueState.all.to_a
+      response = issue_states
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -28,7 +28,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/tags' do
+  post '/apis/v1/issue-states' do
     # request
     response = {}
     status = 200
@@ -36,13 +36,13 @@ class TagController < ApplicationController
     begin
       request_body = JSON.parse(request.body.read)
       name = request_body['name']
-      tag = Tag.new
-      tag.name = name
-      tag.created = Time.now
-      tag.updated = Time.now
-      tag.save
+      issue_state = IssueState.new
+      issue_state.name = name
+      issue_state.created = Time.now
+      issue_state.updated = Time.now
+      issue_state.save
       response = {
-        _id: tag.id.to_s
+        _id: issue_state.id.to_s
       }
     rescue => e
       puts "Error: #{e.message}"
@@ -58,7 +58,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/tags/:_id' do
+  put '/apis/v1/issue-states/:_id' do
     # request
     response = {}
     status = 200
@@ -66,19 +66,19 @@ class TagController < ApplicationController
     begin
       _id = params[:_id]
       request_body = JSON.parse(request.body.read)
-      tag = Tag.find(_id)
-      if tag 
-        tag.name = request_body['name']
-        tag.updated = Time.now
-        tag.save
+      issue_state = IssueState.find(_id)
+      if issue_state 
+        issue_state.name = request_body['name']
+        issue_state.updated = Time.now
+        issue_state.save
         response = {
-          _id: tag.id.to_s
+          _id: issue_state.id.to_s
         }
       else
         status = 404
         response = {
           message: 'Etiqueta a editar no existe',
-          error: '_id no existe en tags'
+          error: '_id no existe en issue-states'
         }
       end
     rescue => e
@@ -95,7 +95,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/tags/:_id' do
+  delete '/apis/v1/issue-states/:_id' do
     # request
     response = {}
     status = 200
@@ -103,9 +103,9 @@ class TagController < ApplicationController
     begin
       _id = params[:_id]
       request_body = JSON.parse(request.body.read)
-      tag = Tag.find(_id)
-      if tag 
-        tag.destroy
+      issue_state = IssueState.find(_id)
+      if issue_state 
+        issue_state.destroy
         response = {
           _id: _id
         }
@@ -113,7 +113,7 @@ class TagController < ApplicationController
         status = 404
         response = {
           message: 'Etiqueta a eliminar no existe',
-          error: '_id no existe en tags'
+          error: '_id no existe en issue-states'
         }
       end
     rescue => e
