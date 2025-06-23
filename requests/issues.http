@@ -101,3 +101,8 @@ Cookie: {{session}}
   "visors_ids": [],
   "editors_ids": []
 }
+
+### Actualizar delete
+DELETE {{baseUrl}}/apis/v1/issues/6858b9fde13cea0e27fe57a7
+Content-Type: application/json
+Cookie: {{session}}

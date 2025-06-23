@@ -51,4 +51,58 @@ class IssueController < ApplicationController
     status status
     halt response.to_json
   end
+
+  put '/apis/v1/issues/:_id/documents' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error crear la etiqueta',
+        error: e.message
+      }
+    end
+    # response
+    status status
+    halt response.to_json
+  end
+
+  delete '/apis/v1/issues/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+      issue = Issue.find(_id)
+      if issue 
+        issue.destroy
+        response = {
+          _id: _id
+        }
+      else
+        status = 404
+        response = {
+          message: 'Incidencia a eliminar no existe',
+          error: '_id no existe en issue-states'
+        }
+      end
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error borrar la incidencia',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
 end
