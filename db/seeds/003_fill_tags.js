@@ -1,0 +1,22 @@
+db.tags.insertMany([
+  { name: "Bug", created: new Date(), updated: new Date() },
+  { name: "Mejora", created: new Date(), updated: new Date() },
+  { name: "UI/UX", created: new Date(), updated: new Date() },
+  { name: "Backend", created: new Date(), updated: new Date() },
+  { name: "Frontend", created: new Date(), updated: new Date() },
+  { name: "Crítico", created: new Date(), updated: new Date() },
+  { name: "Seguridad", created: new Date(), updated: new Date() },
+  { name: "Rendimiento", created: new Date(), updated: new Date() },
+  { name: "Base de datos", created: new Date(), updated: new Date() },
+  { name: "API", created: new Date(), updated: new Date() },
+  { name: "Mobile", created: new Date(), updated: new Date() },
+  { name: "Desktop", created: new Date(), updated: new Date() },
+  { name: "Cloud", created: new Date(), updated: new Date() },
+  { name: "DevOps", created: new Date(), updated: new Date() },
+  { name: "Testing", created: new Date(), updated: new Date() },
+  { name: "Documentación", created: new Date(), updated: new Date() },
+  { name: "Hotfix", created: new Date(), updated: new Date() },
+  { name: "Feature", created: new Date(), updated: new Date() },
+  { name: "Soporte", created: new Date(), updated: new Date() },
+  { name: "Investigación", created: new Date(), updated: new Date() }
+])
