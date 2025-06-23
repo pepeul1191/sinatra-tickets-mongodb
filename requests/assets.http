@@ -17,7 +17,7 @@ Cookie: {{session}}
 }
 
 ### Actualizar priority
-PUT {{baseUrl}}/apis/v1/assets/6858a7aad64d60157a1afffe
+PUT {{baseUrl}}/apis/v1/assets/6858aa5e60883aa5f95580ed
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -27,6 +27,6 @@ Cookie: {{session}}
 }
 
 ### Actualizar delete
-DELETE {{baseUrl}}/apis/v1/assets/6858a793d64d60157a1afffd
+DELETE {{baseUrl}}/apis/v1/assets/6858aa5e60883aa5f95580ed
 Content-Type: application/json
 Cookie: {{session}}

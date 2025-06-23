@@ -39,19 +39,12 @@ class ApplicationController < Sinatra::Base
     
     # Solo procesar si NO es un archivo estático
     unless static_extensions.include?(ext)
-      if request.get?
-        status 404
-        erb :'application/not_found', 
-            layout: :'layouts/blank',
-            locals: { title: 'Recurso no encontrado' }
-      else
-        content_type :json
-        status 404
-        { 
-          message: 'Recurso no encontrado', 
-          error: "#{request.request_method} #{request.path} no existe"
-        }.to_json
-      end
+      content_type :json
+      status 404
+      { 
+        message: 'Recurso no encontrado', 
+        error: "#{request.request_method} #{request.path} no existe"
+      }.to_json
     end
   end
 

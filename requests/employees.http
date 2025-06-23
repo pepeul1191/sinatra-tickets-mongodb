@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:9292
+@session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
+
+### Listar prioritys
+GET {{baseUrl}}/apis/v1/employees
+Content-Type: application/json
+Cookie: {{session}}
+
+### Crear priority
+POST {{baseUrl}}/apis/v1/employees
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "names": "Carlos Alberto",
+  "last_names": "Tevez Martinez",
+  "user_id": 1
+}
+
+### Actualizar priority
+PUT {{baseUrl}}/apis/v1/employees/6858aa5e60883aa5f95580ed
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "names": "Carlitos",
+  "last_names": "Apache Tevez",
+  "user_id": 1
+}
+
+### Actualizar delete
+DELETE {{baseUrl}}/apis/v1/employees/6858aa5e60883aa5f95580ed
+Content-Type: application/json
+Cookie: {{session}}
