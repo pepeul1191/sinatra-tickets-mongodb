@@ -3,7 +3,7 @@ require 'mongoid'
 class Tag
   include Mongoid::Document
   field :name, type: String
-  field :created, type: DateTime, default: -> { Time.now }
+  field :created, type: DateTime
   field :updated, type: DateTime
 
   def as_json(options = {})

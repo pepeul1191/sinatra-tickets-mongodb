@@ -16,7 +16,7 @@ Cookie: {{session}}
 }
 
 ### Actualizar tag
-PUT {{baseUrl}}/apis/v1/issue-states/6858a32064aaf0378e72f795
+PUT {{baseUrl}}/apis/v1/issue-states/6858a661c99c8d1b9aab8201
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -25,10 +25,6 @@ Cookie: {{session}}
 }
 
 ### Actualizar delete
-DELETE {{baseUrl}}/apis/v1/issue-states/6858a09043d00b901ea6b7ea
+DELETE {{baseUrl}}/apis/v1/issue-states/6858a661c99c8d1b9aab8201
 Content-Type: application/json
 Cookie: {{session}}
-
-{
-  "name": "futbol 2222"
-}
