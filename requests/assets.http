@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:9292
+@session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
+
+### Listar prioritys
+GET {{baseUrl}}/apis/v1/assets
+Content-Type: application/json
+Cookie: {{session}}
+
+### Crear priority
+POST {{baseUrl}}/apis/v1/assets
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "volley",
+  "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
+}
+
+### Actualizar priority
+PUT {{baseUrl}}/apis/v1/assets/6858a7aad64d60157a1afffe
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "futbol 2222",
+  "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
+}
+
+### Actualizar delete
+DELETE {{baseUrl}}/apis/v1/assets/6858a793d64d60157a1afffd
+Content-Type: application/json
+Cookie: {{session}}

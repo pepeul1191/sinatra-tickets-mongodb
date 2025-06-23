@@ -1,4 +1,4 @@
-class TagController < ApplicationController
+class AssetController < ApplicationController
   before do
     public_routes = ['/roles']
     unless public_routes.include?(request.path_info) 
@@ -6,14 +6,14 @@ class TagController < ApplicationController
     end
   end
 
-  get '/apis/v1/tags' do
+  get '/apis/v1/assets' do
     # request
     response = {}
     status = 200
     # blogic
     begin
-      tags = Tag.all.to_a
-      response = tags
+      assets = Asset.all.to_a
+      response = assets
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -28,21 +28,21 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/tags' do
+  post '/apis/v1/assets' do
     # request
     response = {}
     status = 200
     # blogic
     begin
       request_body = JSON.parse(request.body.read)
-      name = request_body['name']
-      tag = Tag.new
-      tag.name = name
-      tag.created = Time.now
-      tag.updated = Time.now
-      tag.save
+      asset = Asset.new
+      asset.name = request_body['name']
+      asset.description = request_body['description']
+      asset.created = Time.now
+      asset.updated = Time.now
+      asset.save
       response = {
-        _id: tag.id.to_s
+        _id: asset.id.to_s
       }
     rescue => e
       puts "Error: #{e.message}"
@@ -58,7 +58,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/tags/:_id' do
+  put '/apis/v1/assets/:_id' do
     # request
     response = {}
     status = 200
@@ -66,19 +66,20 @@ class TagController < ApplicationController
     begin
       _id = params[:_id]
       request_body = JSON.parse(request.body.read)
-      tag = Tag.find(_id)
-      if tag 
-        tag.name = request_body['name']
-        tag.updated = Time.now
-        tag.save
+      asset = Asset.find(_id)
+      if asset 
+        asset.name = request_body['name']
+        asset.description = request_body['description']
+        asset.updated = Time.now
+        asset.save
         response = {
-          _id: tag.id.to_s
+          _id: asset.id.to_s
         }
       else
         status = 404
         response = {
           message: 'Etiqueta a editar no existe',
-          error: '_id no existe en tags'
+          error: '_id no existe en asset'
         }
       end
     rescue => e
@@ -95,16 +96,16 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/tags/:_id' do
+  delete '/apis/v1/assets/:_id' do
     # request
     response = {}
     status = 200
     # blogic
     begin
       _id = params[:_id]
-      tag = Tag.find(_id)
-      if tag 
-        tag.destroy
+      asset = Asset.find(_id)
+      if asset 
+        asset.destroy
         response = {
           _id: _id
         }
@@ -112,7 +113,7 @@ class TagController < ApplicationController
         status = 404
         response = {
           message: 'Etiqueta a eliminar no existe',
-          error: '_id no existe en tags'
+          error: '_id no existe en asset'
         }
       end
     rescue => e

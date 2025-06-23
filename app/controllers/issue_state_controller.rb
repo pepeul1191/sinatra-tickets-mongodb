@@ -102,7 +102,6 @@ class IssueStateController < ApplicationController
     # blogic
     begin
       _id = params[:_id]
-      request_body = JSON.parse(request.body.read)
       issue_state = IssueState.find(_id)
       if issue_state 
         issue_state.destroy

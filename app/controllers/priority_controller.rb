@@ -102,7 +102,6 @@ class PriorityController < ApplicationController
     # blogic
     begin
       _id = params[:_id]
-      request_body = JSON.parse(request.body.read)
       priority = Priority.find(_id)
       if priority 
         priority.destroy
