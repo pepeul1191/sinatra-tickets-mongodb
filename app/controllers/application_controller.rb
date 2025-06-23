@@ -32,16 +32,26 @@ class ApplicationController < Sinatra::Base
 
   not_found do
     # Lista de extensiones de archivos estáticos que no deben devolver un 404 con un ERB
-    extensions = ['css', 'js', 'png', 'jpg', 'gif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'eot', 'mp4', 'webm']
-    # Obtener la extensión del archivo de la URL
+    static_extensions = %w[css js png jpg gif svg ico woff woff2 ttf eot mp4 webm]
+    
+    # Obtener la extensión del archivo de la URL (sin el punto)
     ext = File.extname(request.path).delete_prefix('.')
-    # Si la extensión no está en la lista, renderiza la página 404
-    unless extensions.include?(ext)
-      status 404
-      locals = { 
-        title: 'Recurso no encontrado', 
-      }
-      erb :'application/not_found', layout: :'layouts/blank', locals: locals
+    
+    # Solo procesar si NO es un archivo estático
+    unless static_extensions.include?(ext)
+      if request.get?
+        status 404
+        erb :'application/not_found', 
+            layout: :'layouts/blank',
+            locals: { title: 'Recurso no encontrado' }
+      else
+        content_type :json
+        status 404
+        { 
+          message: 'Recurso no encontrado', 
+          error: "#{request.request_method} #{request.path} no existe"
+        }.to_json
+      end
     end
   end
 

@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:8080
+@session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
+
+### Crear usuario
+POST {{baseUrl}}/apis/v1/users
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "username": "bmccormickd",
+  "email": "amandabaker@example.orgd"
+}
+
+### Actualizar correo de usuario
+PUT {{baseUrl}}/apis/v1/users/54/email
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "password": "bmccormickd"
+}
+
+### Actualizar activation key
+PUT {{baseUrl}}/apis/v1/users/54/activation-key
+Content-Type: application/json
+Cookie: {{session}}
+
+### Actualizar reset key
+PUT {{baseUrl}}/apis/v1/users/54/reset-key
+Content-Type: application/json
+Cookie: {{session}}
+
+### Actualizar activated
+PUT {{baseUrl}}/apis/v1/users/54/activated
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "activated": false
+}
+
+### Obtener usuario por id
+GET {{baseUrl}}/apis/v1/users/54
+Content-Type: application/json
+Cookie: {{session}}
+
+### Listar usuarios
+GET {{baseUrl}}/apis/v1/users
+Content-Type: application/json
+Cookie: {{session}}

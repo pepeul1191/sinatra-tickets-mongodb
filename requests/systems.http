@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:8080
+@session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
+
+# @name login
+POST {{baseUrl}}/login
+Cookie: {{session}}
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=sistema123
+
+### cerrar sesión
+GET {{baseUrl}}/sign-out
+
+### Obtener usuarios
+GET {{baseUrl}}/apis/v1/systems
+Accept: application/json
+Cookie: {{session}}
+
+### Obtener usuarios - paginación
+GET {{baseUrl}}/apis/v1/systems?step=10&page=2
+Accept: application/json
+Cookie: {{session}}
+
+### Crear post
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "title": "Hola Mundo",
+  "body": "Este es un post de prueba usando REST Client con base URL",
+  "userId": 1
+}

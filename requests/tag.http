@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:9292
+@session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
+
+### Listar tags
+GET {{baseUrl}}/apis/v1/tags
+Content-Type: application/json
+Cookie: {{session}}
+
+### Crear tag
+POST {{baseUrl}}/apis/v1/tags
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "volley"
+}
+
+### Actualizar tag
+PUT {{baseUrl}}/apis/v1/tags/6858a32064aaf0378e72f795
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "futbol 2222"
+}
+
+### Actualizar delete
+DELETE {{baseUrl}}/apis/v1/tags/6858a09043d00b901ea6b7ea
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "futbol 2222"
+}
