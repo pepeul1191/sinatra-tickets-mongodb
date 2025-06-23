@@ -1,0 +1,103 @@
+@baseUrl = http://localhost:9292
+@session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
+
+### Listar issuses
+GET {{baseUrl}}/apis/v1/employees
+Content-Type: application/json
+Cookie: {{session}}
+
+### Crear issuses caso 1
+POST {{baseUrl}}/apis/v1/issues
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "Mobile Menu Not Closing on Tap",
+  "description": "On iOS Safari, the hamburger menu remains open after selecting a menu item, requiring manual close.", 
+  "issue_state_id": "6858afc3fa45a73106e020c7", 
+  "priority_id": "6858b28bfa45a73106e0215e", 
+  "reportered": "6858b7aefa45a73106e02163", 
+  "assets_ids": [
+    "6858b0cefa45a73106e020f4",
+    "6858b0cefa45a73106e020f6"
+  ], 
+  "tags_ids": [
+    "6858b017fa45a73106e020e8",
+    "6858b017fa45a73106e020ea",
+    "6858b017fa45a73106e020eb"
+  ], 
+  "visors_ids": [
+    "6858b7aefa45a73106e02167"
+    ], 
+  "editors_ids": [
+    "6858b7aefa45a73106e0216a", 
+    "6858b7aefa45a73106e0216b"
+  ]
+}
+
+### Crear issuses caso 2
+POST {{baseUrl}}/apis/v1/issues
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "Mobile Menu Not Closing on Tap",
+  "description": "On iOS Safari, the hamburger menu remains open after selecting a menu item, requiring manual close.", 
+  "issue_state_id": "6858afc3fa45a73106e020c7", 
+  "priority_id": "6858b28bfa45a73106e0215e", 
+  "reportered": "6858b7aefa45a73106e02163", 
+  "assets_ids": [
+    "6858b0cefa45a73106e020f4",
+    "6858b0cefa45a73106e020f6"
+  ], 
+  "tags_ids": [
+    "6858b017fa45a73106e020e8",
+    "6858b017fa45a73106e020ea",
+    "6858b017fa45a73106e020eb"
+  ], 
+  "visors_ids": [
+    "6858b7aefa45a73106e02167"
+  ],
+  "editors_ids": []
+}
+
+### Crear issuses caso 3
+POST {{baseUrl}}/apis/v1/issues
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "Mobile Menu Not Closing on Tap",
+  "description": "On iOS Safari, the hamburger menu remains open after selecting a menu item, requiring manual close.", 
+  "issue_state_id": "6858afc3fa45a73106e020c7", 
+  "priority_id": "6858b28bfa45a73106e0215e", 
+  "reportered": "6858b7aefa45a73106e02163", 
+  "assets_ids": [
+    "6858b0cefa45a73106e020f4",
+    "6858b0cefa45a73106e020f6"
+  ], 
+  "tags_ids": [
+    "6858b017fa45a73106e020e8",
+    "6858b017fa45a73106e020ea",
+    "6858b017fa45a73106e020eb"
+  ],
+  "visors_ids": [],
+  "editors_ids": []
+}
+
+### Crear issuses caso 4
+POST {{baseUrl}}/apis/v1/issues
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "name": "Mobile Menu Not Closing on Tap",
+  "description": "On iOS Safari, the hamburger menu remains open after selecting a menu item, requiring manual close.", 
+  "issue_state_id": "6858afc3fa45a73106e020c7", 
+  "priority_id": "6858b28bfa45a73106e0215e", 
+  "reportered": "6858b7aefa45a73106e02163", 
+  "tags_ids": [],
+  "assets_ids": [],
+  "visors_ids": [],
+  "editors_ids": []
+}
