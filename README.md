@@ -22,8 +22,8 @@ Restaurar backup de la base de datos MongoDB:
 
 Generar UMLs:
 
-    $ chmod +x render_all_puml.sh
-    $ ./render_all_puml.sh
+    $ chmod +x scripts/render_all_puml.sh
+    $ scripts/render_all_puml.sh
 
 ---
 

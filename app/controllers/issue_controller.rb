@@ -52,26 +52,6 @@ class IssueController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/issues/:_id/documents' do
-    # request
-    response = {}
-    status = 200
-    # blogic
-    begin
-      _id = params[:_id]
-    rescue => e
-      puts "Error: #{e.message}"
-      puts e.backtrace
-      response = {
-        message: 'Ocurrió un error crear la etiqueta',
-        error: e.message
-      }
-    end
-    # response
-    status status
-    halt response.to_json
-  end
-
   delete '/apis/v1/issues/:_id' do
     # request
     response = {}

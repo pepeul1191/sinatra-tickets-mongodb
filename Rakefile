@@ -4,7 +4,7 @@ namespace :server do
     ENV['RACK_ENV'] = 'development'
     # Comando para reiniciar automáticamente el servidor con rerun
     command = "bundle exec puma -C config/puma.rb"
-    dirs_to_watch = "app/controllers,app/apis,app/models,config,app/helpers"
+    dirs_to_watch = "app/controllers,app/models,config,app/helpers"
     rerun_command = "rerun --dir #{dirs_to_watch} '#{command}'"
     sh rerun_command
   end
