@@ -28,6 +28,29 @@ class ApplicationController < Sinatra::Base
     env["rack.logger"] = Logger.new(STDOUT)
   end
 
+  before '/api/v1/*' do
+    request_method = request.request_method
+    public_routes = [
+      '/api/v1/auth/generate-token'
+    ]
+    unless public_routes.include?(request.path_info)
+      if %w[GET POST PUT DELETE].include?(request_method)
+        authenticate!
+        content_type :json
+      end
+    end
+  end
+
+  # Manejo de preflight (OPTIONS)
+  options '/api/v1/*' do
+    # No necesitas autenticación aquí
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8000'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    200
+  end
+
   helpers Helpers
 
   [

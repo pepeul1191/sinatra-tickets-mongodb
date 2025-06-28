@@ -6,7 +6,7 @@ class TagController < ApplicationController
     end
   end
 
-  get '/apis/v1/tags' do
+  get '/api/v1/tags' do
     # request
     response = {}
     status = 200
@@ -28,7 +28,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/tags' do
+  post '/api/v1/tags' do
     # request
     response = {}
     status = 200
@@ -58,7 +58,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/tags/:_id' do
+  put '/api/v1/tags/:_id' do
     # request
     response = {}
     status = 200
@@ -95,7 +95,7 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/tags/:_id' do
+  delete '/api/v1/tags/:_id' do
     # request
     response = {}
     status = 200

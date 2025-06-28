@@ -1,13 +1,16 @@
 @baseUrl = http://localhost:9292
 @session = mysession=MTc0OTg1Nzc5MHxEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fMsOMrySaZXb7iVqWPzRGdBZzMNWzsX53YvrKgdxuykg
 
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ5b3VyLWFwcC5jb20iLCJhdWQiOiJ5b3VyLWNsaWVudC1pZCIsInN1YiI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NTEwODc0NzIsImlhdCI6MTc1MTA4Mzg3MiwidXNlcl9pZCI6MTIzLCJyb2xlIjoiYWRtaW4ifQ.21NWOBxkdXwB6_kVn7aE2UzD8Kx3RFBcE6feiZ-1QM8
+
 ### Listar tags
-GET {{baseUrl}}/apis/v1/tags
+GET {{baseUrl}}/api/v1/tags
 Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
 ### Crear tag
-POST {{baseUrl}}/apis/v1/tags
+POST {{baseUrl}}/api/v1/tags
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -16,7 +19,7 @@ Cookie: {{session}}
 }
 
 ### Actualizar tag
-PUT {{baseUrl}}/apis/v1/tags/6858a32064aaf0378e72f795
+PUT {{baseUrl}}/api/v1/tags/6858a32064aaf0378e72f795
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -25,6 +28,6 @@ Cookie: {{session}}
 }
 
 ### Actualizar delete
-DELETE {{baseUrl}}/apis/v1/tags/6858a09043d00b901ea6b7ea
+DELETE {{baseUrl}}/api/v1/tags/6858a09043d00b901ea6b7ea
 Content-Type: application/json
 Cookie: {{session}}
