@@ -6,7 +6,7 @@ class EmployeeController < ApplicationController
     end
   end
 
-  get '/apis/v1/employees' do
+  get '/api/v1/employees' do
     # request
     response = {}
     status = 200
@@ -28,7 +28,7 @@ class EmployeeController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/employees' do
+  post '/api/v1/employees' do
     # request
     response = {}
     status = 200
@@ -59,7 +59,7 @@ class EmployeeController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/employees/:_id' do
+  put '/api/v1/employees/:_id' do
     # request
     response = {}
     status = 200
@@ -98,7 +98,7 @@ class EmployeeController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/employees/:_id' do
+  delete '/api/v1/employees/:_id' do
     # request
     response = {}
     status = 200

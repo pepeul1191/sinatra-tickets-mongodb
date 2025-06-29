@@ -6,7 +6,7 @@ class IssueController < ApplicationController
     end
   end
 
-  post '/apis/v1/issues' do
+  post '/api/v1/issues' do
     # request
     response = {}
     status = 200

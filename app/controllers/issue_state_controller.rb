@@ -6,7 +6,7 @@ class IssueStateController < ApplicationController
     end
   end
 
-  get '/apis/v1/issue-states' do
+  get '/api/v1/issue-states' do
     # request
     response = {}
     status = 200
@@ -28,7 +28,7 @@ class IssueStateController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/issue-states' do
+  post '/api/v1/issue-states' do
     # request
     response = {}
     status = 200
@@ -58,7 +58,7 @@ class IssueStateController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/issue-states/:_id' do
+  put '/api/v1/issue-states/:_id' do
     # request
     response = {}
     status = 200
@@ -95,7 +95,7 @@ class IssueStateController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/issue-states/:_id' do
+  delete '/api/v1/issue-states/:_id' do
     # request
     response = {}
     status = 200

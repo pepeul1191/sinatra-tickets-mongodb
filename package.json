@@ -1,0 +1,29 @@
+{
+  "name": "tickets",
+  "version": "1.0.0",
+  "description": "- [Documentación](#documentación)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "rake server:development",
+    "export-postman": "node ./scripts/exportPostman.js",
+    "restore-postman": "node ./scripts/restorePostman.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pepeul1191/sinatra-tickets-mongodb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pepeul1191/sinatra-tickets-mongodb/issues"
+  },
+  "homepage": "https://github.com/pepeul1191/sinatra-tickets-mongodb#readme",
+  "devDependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.0"
+  }
+}

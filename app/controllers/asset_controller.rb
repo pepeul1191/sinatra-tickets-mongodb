@@ -6,7 +6,7 @@ class AssetController < ApplicationController
     end
   end
 
-  get '/apis/v1/assets' do
+  get '/api/v1/assets' do
     # request
     response = {}
     status = 200
@@ -28,7 +28,38 @@ class AssetController < ApplicationController
     halt response.to_json
   end
 
-  post '/apis/v1/assets' do
+  get '/api/v1/assets/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+      asset = Asset.where(id: _id).first
+      if asset 
+        response = asset
+      else
+        status = 404
+        response = {
+          message: 'Activo a editar no existe',
+          error: '_id no existe en assets'
+        }
+      end
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error actualizar el activo',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
+  post '/api/v1/assets' do
     # request
     response = {}
     status = 200
@@ -58,7 +89,7 @@ class AssetController < ApplicationController
     halt response.to_json
   end
 
-  put '/apis/v1/assets/:_id' do
+  put '/api/v1/assets/:_id' do
     # request
     response = {}
     status = 200
@@ -96,7 +127,7 @@ class AssetController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/assets/:_id' do
+  delete '/api/v1/assets/:_id' do
     # request
     response = {}
     status = 200
