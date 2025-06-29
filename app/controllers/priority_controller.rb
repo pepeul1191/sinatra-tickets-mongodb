@@ -28,6 +28,37 @@ class PriorityController < ApplicationController
     halt response.to_json
   end
 
+  get '/api/v1/priorities/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+      priority = Priority.where(id: _id).first
+      if priority 
+        response = priority
+      else
+        status = 404
+        response = {
+          message: 'Prioridad a obtener no existe',
+          error: '_id no existe en priorities'
+        }
+      end
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error obtener la prioridad',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
   post '/api/v1/priorities' do
     # request
     response = {}
