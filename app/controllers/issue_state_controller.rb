@@ -58,6 +58,37 @@ class IssueStateController < ApplicationController
     halt response.to_json
   end
 
+  get '/api/v1/issue-states/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+      issue_state = IssueState.where(id: _id).first
+      if issue_state 
+        response = issue_state
+      else
+        status = 404
+        response = {
+          message: 'Estado de etiqueta a obtener no existe',
+          error: '_id no existe en priorities'
+        }
+      end
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error obtener el estado etiqueta',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
   put '/api/v1/issue-states/:_id' do
     # request
     response = {}

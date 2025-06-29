@@ -10,7 +10,7 @@ class Employee
 
   def as_json(options = {})
     super(options.merge(except: :_id)).tap do |json|
-      json["id"] = self._id.to_s
+      json["_id"] = self._id.to_s
     end
   end
 end

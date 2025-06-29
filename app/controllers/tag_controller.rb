@@ -28,6 +28,37 @@ class TagController < ApplicationController
     halt response.to_json
   end
 
+  get '/api/v1/tags/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      _id = params[:_id]
+      tag = Tag.where(id: _id).first
+      if tag 
+        response = tag
+      else
+        status = 404
+        response = {
+          message: 'Etiqueta a obtener no existe',
+          error: '_id no existe en priorities'
+        }
+      end
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error obtener la etiqueta',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
   post '/api/v1/tags' do
     # request
     response = {}
