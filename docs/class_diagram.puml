@@ -58,7 +58,7 @@ class Issue {
 class History {
   - _id: ObjectId
   - description: String
-  - employeeId: ObjectId
+  - reportered: ObjectId
   - documents: Array[Document]
   - created: DateTime
   - updated: DateTim
@@ -74,8 +74,8 @@ class Document {
 }
 
 Issue "n" *-- "1" Employee : crea
-Issue "n" *-- "n" Employee : mira
-Issue "n" *-- "n" Employee : edita
+Issue "n" o-- "n" Employee : mira
+Issue "n" o-- "n" Employee : edita
 Issue "n" *-- "1" IssueState : tiene
 Issue "n" *-- "1" Priority : tiene
 Issue "n" o-- "n" Asset : tiene
@@ -83,5 +83,6 @@ Issue "n" o-- "n" Tag : tiene
 Issue "1" o-- "n" History : tiene
 Issue "1" o-- "n" Document : tiene
 History "1" o-- "n" Document : tiene
+History "1" *-- "n" Employee : genera
 
 @enduml

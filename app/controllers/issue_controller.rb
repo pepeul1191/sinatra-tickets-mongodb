@@ -92,17 +92,17 @@ class IssueController < ApplicationController
     status = 200
     # blogic
     begin
-      isssue_id = params[:_id]
+      issue_id = params[:_id]
       request_body = JSON.parse(request.body.read)
       # create document
-      document = Document.new
+      document = Document.new 
       document.name = request_body['name']
       document.description = request_body['description']
       document.url = request_body['url']
       document.mime = request_body['mime']
       document.created = Time.now
       # add to issue
-      issue = Issue.find(isssue_id)
+      issue = Issue.find(issue_id)
       issue.documents << document.as_json
       issue.updated = Time.now
       issue.save
@@ -128,10 +128,10 @@ class IssueController < ApplicationController
     status = 200
     # blogic
     begin
-      isssue_id = params[:_id]
+      issue_id = params[:_id]
       document_id = params[:document_id]
       # add to issue
-      issue = Issue.find(isssue_id)
+      issue = Issue.find(issue_id)
       original_count = issue.documents.count
       issue.documents = issue.documents.reject { |doc| doc["_id"] == document_id }
       if issue.documents.count == original_count
@@ -147,6 +147,42 @@ class IssueController < ApplicationController
       puts e.backtrace
       response = {
         message: 'Ocurrió un error retirar el documento a la incidencia',
+        error: e.message
+      }
+    end
+    # response
+    status status
+    halt response.to_json
+  end
+
+  post '/api/v1/issues/:_id/histories' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      issue_id = params[:_id]
+      request_body = JSON.parse(request.body.read)
+      # create document
+      history = History.new 
+      history.reportered = BSON::ObjectId(request_body['reportered'])
+      history.description = request_body['description']
+      history.created = Time.now
+      history.save
+      # add to issue
+      issue = Issue.find(issue_id)
+      issue.histories << history.id
+      issue.updated = Time.now
+      issue.save
+      response = {
+        _id: issue.id.to_s,
+        history_id: history.id.to_s
+      }
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error agregar historia a la incidencia',
         error: e.message
       }
     end
