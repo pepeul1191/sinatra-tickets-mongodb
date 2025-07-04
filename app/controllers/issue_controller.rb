@@ -45,6 +45,43 @@ class IssueController < ApplicationController
     end
   end
 
+  get '/api/v1/issues/summary' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      issues = Issue.summary_list().to_a
+      response = issues
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error al listar las incidencias',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    response.to_json
+  end
+
+  def faltas
+    if request_body['assets_ids'] != [] then
+      issue.assets_ids = request_body['assets_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['tags_ids'] != [] then
+      issue.tags_ids = request_body['tags_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['visors_ids'] != [] then
+      issue.visors_ids = request_body['visors_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['editors_ids'] != [] then
+      issue.editors_ids = request_body['editors_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+  end
+
   post '/api/v1/issues' do
     # request
     response = {}
