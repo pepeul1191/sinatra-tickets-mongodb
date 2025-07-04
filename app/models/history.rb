@@ -4,6 +4,7 @@ class History
   include Mongoid::Document
   field :description, type: String
   field :reportered, type: BSON::ObjectId
+  field :documents, type: Array, default: [], as: :documents
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
 

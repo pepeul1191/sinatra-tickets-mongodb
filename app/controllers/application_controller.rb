@@ -6,6 +6,8 @@ require 'sinatra/cross_origin'
 require 'sinatra/cors'
 
 class ApplicationController < Sinatra::Base
+  register Sinatra::CrossOrigin
+  use Rack::CommonLogger, Logger.new(STDOUT)
   # Habilitar logging
   configure :development, :production do
     enable :logging
@@ -58,35 +60,6 @@ class ApplicationController < Sinatra::Base
   ].each do |path|
     before path do
       check_session_true
-    end
-  end
-
-  post '/api/v1/auth/generate-token' do
-    incoming_auth = request.env['HTTP_X_AUTH_TRIGGER']
-    # puts "Incoming X-Auth-Trigger: #{incoming_auth}"
-    # puts "Expected AUTH_HEADER: #{settings.auth_header}"
-    if incoming_auth == settings.auth_header
-      puts "Authentication successful. Generating JWT."
-      claims = {
-        iss: 'your-app.com',
-        aud: 'your-client-id',
-        sub: 'user@example.com',
-        exp: Time.now.to_i + 3600, # 1 hora
-        iat: Time.now.to_i,
-        user_id: 123,
-        role: 'admin'
-      }
-      begin
-        token = JWT.encode claims, settings.jwt_secret, 'HS256'
-        { token: token }.to_json
-      rescue => e
-        puts "Failed to encode JWT: #{e.message}"
-        halt 500, { error: 'Failed to generate token' }.to_json
-      end
-    else
-      puts "Unauthorized access attempt. Invalid or missing X-Auth-Trigger."
-      status 401
-      { error: 'Unauthorized', message: 'Invalid or missing X-Auth-Trigger' }.to_json
     end
   end
 

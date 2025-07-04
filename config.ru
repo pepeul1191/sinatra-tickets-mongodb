@@ -6,5 +6,7 @@ use AssetController
 use IssueStateController
 use PriorityController
 use EmployeeController
+use AuthController
+use HistoryController
 
 run ApplicationController

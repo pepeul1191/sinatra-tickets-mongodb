@@ -40,7 +40,7 @@ class IssueState {
 
 class Issue {
   - _id: ObjectId
-  - name: String
+  - resume: String
   - description: String
   - issueStateId: ObjectId
   - priorityId: ObjectId
@@ -48,9 +48,10 @@ class Issue {
   - tagsIds: Array[ObjectIds]
   - visorsIds: Array[ObjectIds]
   - editorsIds: Array[ObjectIds]
-  - histories: Array[History]
+  - histories: Array[ObjectIds]
   - documents: Array[Document]
-  - reportered: ObjectId
+  - reporterId: ObjectId
+  - reportered: DateTime
   - created: DateTime
   - updated: DateTime
 }
@@ -64,12 +65,26 @@ class History {
   - updated: DateTim
 }
 
-class Document {
+class Document <<embedded>>{
   - _id: ObjectId
   - name: String
   - description: String
   - mime: String
   - url: String
+  - created: DateTime
+}
+
+class Track {
+  - _id: ObjectId
+  - issue_id: ObjectId
+  - logs: Array[Log]
+}
+
+class Log <<embedded>>{
+  - _id: ObjectId
+  - operation: String
+  - description: String
+  - user_id: String
   - created: DateTime
 }
 
@@ -84,5 +99,7 @@ Issue "1" o-- "n" History : tiene
 Issue "1" o-- "n" Document : tiene
 History "1" o-- "n" Document : tiene
 History "1" *-- "n" Employee : genera
+Track "1" *-- "n" Log : registra
+Issue "1" --* "n" Track : registra
 
 @enduml

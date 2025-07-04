@@ -1,12 +1,13 @@
 require 'mongoid'
 
-class Asset
+class Log
   include Mongoid::Document
-  field :name, type: String
-  field :issue_id, type: BSON::ObjectId
-  field :logs, type: Array, default: [], as: :logs
+  field :operation, type: String # create, read, edit, delete
+  field :description, type: String # create, read, edit, delete
+  field :user_id, type: BSON::ObjectId
   field :created, type: DateTime
-  field :updated, type: DateTime
+
+  embedded_in :track
 
   def as_json(options = {})
     super(options.merge(except: :_id)).tap do |json|

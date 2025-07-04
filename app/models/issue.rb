@@ -2,11 +2,12 @@ require 'mongoid'
 
 class Issue
   include Mongoid::Document
-  field :name, type: String
+  field :resume, type: String
   field :description, type: String
   field :issue_state_id, type: BSON::ObjectId
   field :priority_id, type: BSON::ObjectId
-  field :reportered, type: BSON::ObjectId
+  field :reporter_id, type: BSON::ObjectId
+  field :reportered, type: DateTime
   field :assets_ids, type: Array, default: [], as: :assets_ids
   field :tags_ids, type: Array, default: [], as: :tags_ids
   field :visors_ids, type: Array, default: [], as: :visors_ids

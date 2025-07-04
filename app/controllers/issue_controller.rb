@@ -1,8 +1,47 @@
+require 'date'
+
 class IssueController < ApplicationController
   before do
     public_routes = ['/roles']
     unless public_routes.include?(request.path_info) 
       #check_session_true
+    end
+  end
+
+  get '/api/v1/issues' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      issues = Issue.all.to_a
+      response = issues
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error al listar las incidencias',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
+  def faltas
+    if request_body['assets_ids'] != [] then
+      issue.assets_ids = request_body['assets_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['tags_ids'] != [] then
+      issue.tags_ids = request_body['tags_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['visors_ids'] != [] then
+      issue.visors_ids = request_body['visors_ids'].map { |id| BSON::ObjectId.from_string(id) }
+    end
+    if request_body['editors_ids'] != [] then
+      issue.editors_ids = request_body['editors_ids'].map { |id| BSON::ObjectId.from_string(id) }
     end
   end
 
@@ -13,29 +52,33 @@ class IssueController < ApplicationController
     # blogic
     begin
       request_body = JSON.parse(request.body.read)
+      # nuevo Issue
       issue = Issue.new
-      issue.name = request_body['name']
+      issue.resume = request_body['resume']
       issue.description = request_body['description']
       issue.issue_state_id = BSON::ObjectId(request_body['issue_state_id'])
       issue.priority_id = BSON::ObjectId(request_body['priority_id'])
-      issue.reportered = BSON::ObjectId(request_body['reportered'])
-      if request_body['assets_ids'] != [] then
-        issue.assets_ids = request_body['assets_ids'].map { |id| BSON::ObjectId.from_string(id) }
-      end
-      if request_body['tags_ids'] != [] then
-        issue.tags_ids = request_body['tags_ids'].map { |id| BSON::ObjectId.from_string(id) }
-      end
-      if request_body['visors_ids'] != [] then
-        issue.visors_ids = request_body['visors_ids'].map { |id| BSON::ObjectId.from_string(id) }
-      end
-      if request_body['editors_ids'] != [] then
-        issue.editors_ids = request_body['editors_ids'].map { |id| BSON::ObjectId.from_string(id) }
-      end
+      issue.reporter_id = BSON::ObjectId(request_body['reporter_id'])
+      issue.reportered = DateTime.iso8601(request_body['reportered'])
+      issue.assets_ids = []
+      issue.tags_ids = []
+      issue.visors_ids = []
+      issue.editors_ids = []
       issue.histories = []
       issue.documents = []
       issue.created = Time.now
       issue.updated = Time.now
       issue.save
+      # track de Issue
+      log = Log.new
+      log.operation = 'create'
+      log.description = 'Incidencia creada'
+      log.user_id = 'pendiente'
+      log.created = Time.now
+      track = Track.new
+      track.logs << log
+      track.save!
+
       response = {
         _id: issue.id.to_s
       }
@@ -96,7 +139,7 @@ class IssueController < ApplicationController
       request_body = JSON.parse(request.body.read)
       # create document
       document = Document.new 
-      document.name = request_body['name']
+      document.resume = request_body['resume']
       document.description = request_body['description']
       document.url = request_body['url']
       document.mime = request_body['mime']
