@@ -67,6 +67,29 @@ class IssueController < ApplicationController
     response.to_json
   end
 
+  get '/api/v1/issues/fetch-one/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      issues = Issue.find_one(params[:_id])
+      puts issues
+      response = issues
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error al listar las incidencias',
+        error: e.message
+      }
+    end
+    # response
+    content_type :json
+    status status
+    response.to_json
+  end
+
   def faltas
     if request_body['assets_ids'] != [] then
       issue.assets_ids = request_body['assets_ids'].map { |id| BSON::ObjectId.from_string(id) }
@@ -115,6 +138,46 @@ class IssueController < ApplicationController
       track = Track.new
       track.logs << log
       track.save!
+
+      response = {
+        _id: issue.id.to_s
+      }
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error crear la etiqueta',
+        error: e.message
+      }
+    end
+    # response
+    status status
+    halt response.to_json
+  end
+
+  put '/api/v1/issues/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      request_body = JSON.parse(request.body.read)
+      issue_id = params[:_id]
+
+      # Buscar el issue existente
+      issue = Issue.where(id: issue_id).first
+      raise "Issue no encontrado" unless issue
+  
+      # Actualizar campos
+      issue.resume = request_body['resume']
+      issue.description = request_body['description']
+      issue.issue_state_id = BSON::ObjectId(request_body['issue_state_id'])
+      issue.priority_id = BSON::ObjectId(request_body['priority_id'])
+      issue.reporter_id = BSON::ObjectId(request_body['reporter_id'])
+      issue.reportered = DateTime.iso8601(request_body['reportered']) rescue nil
+      issue.updated = Time.now
+  
+      issue.save!
 
       response = {
         _id: issue.id.to_s
