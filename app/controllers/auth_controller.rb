@@ -32,6 +32,7 @@ class AuthController < ApplicationController
           iat: Time.now.to_i,
           user: request_body['user'],
           employee: {
+            _id: employee._id.to_s,
             names: employee.names,
             last_names: employee.last_names,
           },

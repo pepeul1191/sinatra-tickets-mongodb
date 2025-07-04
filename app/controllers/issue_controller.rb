@@ -95,6 +95,50 @@ class IssueController < ApplicationController
     halt response.to_json
   end
 
+  patch '/api/v1/issues/:_id' do
+    # request
+    response = {}
+    status = 200
+    # blogic
+    begin
+      request_body = JSON.parse(request.body.read)
+      _id = params[:_id]
+      # nuevo Issue
+      issue = Issue.find(_id)
+      # Reemplazar completamente tags_ids con un nuevo arreglo de ObjectId
+      new_tag_ids = request_body.map { |id| BSON::ObjectId(id) }
+      issue.tags_ids = new_tag_ids
+      issue.updated = Time.now
+      issue.save
+      # track de Issue
+      track = Track.where(issue_id: BSON::ObjectId(_id)).first
+      if track
+        log = Log.new(
+          operation: 'update',
+          description: 'Etiquetas actualizadas',
+          user_id: @current_user['id'], # asegúrate que sea un ObjectId válido
+          created: Time.now
+        )
+        track.logs << log
+        track.save!
+      end
+
+      response = {
+        _id: issue.id.to_s
+      }
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      response = {
+        message: 'Ocurrió un error crear la etiqueta',
+        error: e.message
+      }
+    end
+    # response
+    status status
+    halt response.to_json
+  end
+
   delete '/apis/v1/issues/:_id' do
     # request
     response = {}
