@@ -246,7 +246,7 @@ class IssueController < ApplicationController
     # blogic
     begin
       _id = params[:_id]
-      issue = Issue.find(_id)
+      issue = Issue.where(id: _id).first
       if issue 
         issue.destroy
         response = {
@@ -283,14 +283,19 @@ class IssueController < ApplicationController
       request_body = JSON.parse(request.body.read)
       # create document
       document = Document.new 
-      document.resume = request_body['resume']
+      document.name = request_body['name']
       document.description = request_body['description']
+      document.size = request_body['size']
       document.url = request_body['url']
       document.mime = request_body['mime']
       document.created = Time.now
       # add to issue
       issue = Issue.find(issue_id)
-      issue.documents << document.as_json
+      unless issue
+        status 404 # Not Found
+        return { error: "Issue con ID '#{issue_id}' no encontrado." }.to_json
+      end
+      issue.documents << document
       issue.updated = Time.now
       issue.save
       response = {

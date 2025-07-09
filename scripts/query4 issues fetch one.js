@@ -4,7 +4,7 @@ db.getCollection('issues').aggregate([
   // Filtro por _id
   {
     $match: {
-      _id: ObjectId("68672d5be6dbe43c81ec9dd0")
+      _id: ObjectId("686759ace06d833aafeb238d")
     }
   },
   {
@@ -22,14 +22,52 @@ db.getCollection('issues').aggregate([
     $project: {
       _id: { $toString: "$_id" },
       resume: 1,
+      description: 1,
       priority_id: 1,
       reporter_id: 1,
       issue_state_id: 1,
       tags_ids: 1,
+      documents: 1, // Incluimos documentos para procesarlos luego
       reportered: {
         $dateToString: {
           format: "%Y-%m-%d %H:%M:%S",
           date: "$reportered"
+        }
+      },
+      created: {
+        $dateToString: {
+          format: "%Y-%m-%d %H:%M:%S",
+          date: "$created"
+        }
+      },
+      updated: {
+        $dateToString: {
+          format: "%Y-%m-%d %H:%M:%S",
+          date: "$updated"
+        }
+      }
+    }
+  },
+  // Procesamos el array 'documents' para convertir _id y created
+  {
+    $addFields: {
+      documents: {
+        $map: {
+          input: "$documents",
+          as: "doc",
+          in: {
+            _id: { $toString: "$$doc._id" },
+            name: "$$doc.name",
+            description: "$$doc.description",
+            url: "$$doc.url",
+            mime: "$$doc.mime",
+            created: {
+              $dateToString: {
+                date: "$$doc.created",
+                format: "%Y-%m-%dT%H:%M:%S.%LZ"
+              }
+            }
+          }
         }
       }
     }
@@ -87,7 +125,10 @@ db.getCollection('issues').aggregate([
     $project: {
       _id: 1,
       resume: 1,
+      description: 1,
       reportered: 1,
+      created: 1,
+      updated: 1,
       priority: {
         _id: { $toString: "$priority._id" },
         name: "$priority.name"
@@ -102,7 +143,8 @@ db.getCollection('issues').aggregate([
         _id: { $toString: "$issue_state._id" },
         name: "$issue_state.name"
       },
-      tags: 1
+      tags: 1,
+      documents: 1
     }
   }
 ]).next();

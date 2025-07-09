@@ -2,10 +2,14 @@ require 'mongoid'
 
 class Document
   include Mongoid::Document
+
+  embedded_in :issue
+
   field :name, type: String
   field :description, type: String
   field :url, type: String
   field :mime, type: String
+  field :size, type: Integer
   field :created, type: DateTime
 
   def as_json(options = {})

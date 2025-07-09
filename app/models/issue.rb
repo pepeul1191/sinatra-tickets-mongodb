@@ -2,6 +2,7 @@ require 'mongoid'
 
 class Issue
   include Mongoid::Document
+
   field :resume, type: String
   field :description, type: String
   field :issue_state_id, type: BSON::ObjectId
@@ -16,6 +17,8 @@ class Issue
   field :documents, type: Array, default: [], as: :documents
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
+
+  embeds_many :documents, class_name: 'Document'
 
   def as_json(options = {})
     super(options.merge(except: :_id)).tap do |json|
@@ -121,108 +124,148 @@ class Issue
 
   def self.find_one(issue_id)
     Issue.collection.aggregate([
-      # 1. Filtro por _id (ObjectId)
-      { '$match' => { '_id' => BSON::ObjectId(issue_id) } },
-  
-      # 2. Garantiza que tags_ids exista como array (pero no convierte nada)
       {
-        '$addFields' => {
-          'tags_ids' => { '$ifNull' => ['$tags_ids', []] }
+        "$match" => {
+          "_id" => BSON::ObjectId(issue_id)
         }
       },
-  
-      # 3. Proyección inicial
       {
-        '$project' => {
-          '_id' => { '$toString' => '$_id' },
-          'resume' => 1,
-          'description' => 1,
-          'priority_id' => 1,
-          'reporter_id' => 1,
-          'issue_state_id' => 1,
-          'tags_ids' => 1,
-          'reportered' => {
-            '$dateToString' => {
-              'format' => '%Y-%m-%d %H:%M:%S',
-              'date' => '$reportered'
+        "$addFields" => {
+          "tags_ids" => {
+            "$map" => {
+              "input" => { "$ifNull" => ["$tags_ids", []] },
+              "as" => "id",
+              "in" => { "$toObjectId" => "$$id" }
             }
           }
         }
       },
-  
-      # 4. Lookups (igual que antes)
       {
-        '$lookup' => {
-          'from' => 'priorities',
-          'localField' => 'priority_id',
-          'foreignField' => '_id',
-          'as' => 'priority'
+        "$project" => {
+          "_id" => { "$toString" => "$_id" },
+          "resume" => 1,
+          "description" => 1,
+          "priority_id" => 1,
+          "reporter_id" => 1,
+          "issue_state_id" => 1,
+          "tags_ids" => 1,
+          "documents" => 1,
+          "reportered" => {
+            "$dateToString" => {
+              "format" => "%Y-%m-%d %H:%M:%S",
+              "date" => "$reportered"
+            }
+          },
+          "created" => {
+            "$dateToString" => {
+              "format" => "%Y-%m-%d %H:%M:%S",
+              "date" => "$created"
+            }
+          },
+          "updated" => {
+            "$dateToString" => {
+              "format" => "%Y-%m-%d %H:%M:%S",
+              "date" => "$updated"
+            }
+          }
         }
       },
       {
-        '$lookup' => {
-          'from' => 'employees',
-          'localField' => 'reporter_id',
-          'foreignField' => '_id',
-          'as' => 'reporter'
+        "$addFields" => {
+          "documents" => {
+            "$map" => {
+              "input" => "$documents",
+              "as" => "doc",
+              "in" => {
+                "_id" => { "$toString" => "$$doc._id" },
+                "name" => "$$doc.name",
+                "description" => "$$doc.description",
+                "url" => "$$doc.url",
+                "mime" => "$$doc.mime",
+                "created" => {
+                  "$dateToString" => {
+                    "date" => "$$doc.created",
+                    "format" => "%Y-%m-%dT%H:%M:%S.%LZ"
+                  }
+                }
+              }
+            }
+          }
         }
       },
       {
-        '$lookup' => {
-          'from' => 'issue_states',
-          'localField' => 'issue_state_id',
-          'foreignField' => '_id',
-          'as' => 'issue_state'
+        "$lookup" => {
+          "from" => "priorities",
+          "localField" => "priority_id",
+          "foreignField" => "_id",
+          "as" => "priority"
         }
       },
       {
-        '$lookup' => {
-          'from' => 'tags',
-          'let' => { 'tagIds' => '$tags_ids' },
-          'pipeline' => [
+        "$lookup" => {
+          "from" => "employees",
+          "localField" => "reporter_id",
+          "foreignField" => "_id",
+          "as" => "reporter"
+        }
+      },
+      {
+        "$lookup" => {
+          "from" => "issue_states",
+          "localField" => "issue_state_id",
+          "foreignField" => "_id",
+          "as" => "issue_state"
+        }
+      },
+      {
+        "$lookup" => {
+          "from" => "tags",
+          "let" => { "tagIds" => "$tags_ids" },
+          "pipeline" => [
             {
-              '$match' => {
-                '$expr' => {
-                  '$in' => ['$_id', '$$tagIds']
+              "$match" => {
+                "$expr" => {
+                  "$in" => ["$_id", "$$tagIds"]
                 }
               }
             },
             {
-              '$project' => {
-                '_id' => { '$toString' => '$_id' },
-                'name' => 1
+              "$project" => {
+                "_id" => { "$toString" => "$_id" },
+                "name" => 1
               }
             }
           ],
-          'as' => 'tags'
+          "as" => "tags"
         }
       },
-  
-      # 5. Unwind y proyección final
-      { '$unwind' => '$priority' },
-      { '$unwind' => '$reporter' },
-      { '$unwind' => '$issue_state' },
+      { "$unwind" => "$priority" },
+      { "$unwind" => "$reporter" },
+      { "$unwind" => "$issue_state" },
       {
-        '$project' => {
-          '_id' => 1,
-          'resume' => 1,
-          'description' => 1,
-          'reportered' => 1,
-          'priority' => {
-            '_id' => { '$toString' => '$priority._id' },
-            'name' => '$priority.name'
+        "$project" => {
+          "_id" => 1,
+          "resume" => 1,
+          "description" => 1,
+          "reportered" => 1,
+          "created" => 1,
+          "updated" => 1,
+          "priority" => {
+            "_id" => { "$toString" => "$priority._id" },
+            "name" => "$priority.name"
           },
-          'reporter' => {
-            '_id' => { '$toString' => '$reporter._id' },
-            'name' => {
-              '$concat' => ['$reporter.names', ' ', '$reporter.last_names']
+          "reporter" => {
+            "_id" => { "$toString" => "$reporter._id" },
+            "name" => {
+              "$concat" => ["$reporter.names", " ", "$reporter.last_names"]
             }
           },
-          'issue_state' => {
-            '_id' => { '$toString' => '$issue_state._id' },
-            'name' => '$issue_state.name'
+          "issue_state" => {
+            "_id" => { "$toString" => "$issue_state._id" },
+            "name" => "$issue_state.name"
           },
-          'tags' => 1
+          "tags" => 1,
+          "documents" => 1
         }
       }
     ]).first

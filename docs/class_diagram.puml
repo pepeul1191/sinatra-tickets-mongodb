@@ -69,6 +69,7 @@ class Document <<embedded>>{
   - _id: ObjectId
   - name: String
   - description: String
+  - size: Integer
   - mime: String
   - url: String
   - created: DateTime
