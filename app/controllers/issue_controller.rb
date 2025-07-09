@@ -325,7 +325,7 @@ class IssueController < ApplicationController
       # add to issue
       issue = Issue.find(issue_id)
       original_count = issue.documents.count
-      issue.documents = issue.documents.reject { |doc| doc["_id"] == document_id }
+      issue.documents = issue.documents.reject { |doc| doc["_id"] == BSON::ObjectId(document_id) }
       if issue.documents.count == original_count
         status = 404
         response = { message: "Documento no encontrado en la incidencia", "error": "No se encontró #{document_id} en inciencia" }
