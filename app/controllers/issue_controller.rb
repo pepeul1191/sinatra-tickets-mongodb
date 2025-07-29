@@ -298,9 +298,7 @@ class IssueController < ApplicationController
       issue.documents << document
       issue.updated = Time.now
       issue.save
-      response = {
-        _id: issue.id.to_s
-      }
+      response = document
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace

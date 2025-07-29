@@ -3,6 +3,7 @@ require 'mongoid'
 class Asset
   include Mongoid::Document
   field :name, type: String
+  field :description, type: String
   field :issue_id, type: BSON::ObjectId
   field :logs, type: Array, default: [], as: :logs
   field :created, type: DateTime
