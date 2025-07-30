@@ -6,7 +6,7 @@ class TagController < ApplicationController
     end
   end
 
-  get '/api/v1/tags' do
+  get '/api/v0.5/tags' do
     # request
     response = {}
     status = 200
@@ -22,6 +22,89 @@ class TagController < ApplicationController
         error: e.message
       }
     end
+    # response
+    content_type :json
+    status status
+    halt response.to_json
+  end
+
+  get '/api/v1/tags' do
+    # request
+    response = {}
+    status = 200
+    
+    # Obtener parámetros de consulta
+    name = params[:name]
+    page = params[:page]
+    step = params[:step]
+    
+    # blogic
+    begin
+      # Construir la consulta base
+      query = Tag.all
+      
+      # Aplicar filtros usando criterios de Mongoid
+      if name && !name.empty?
+        query = query.where(:name => /#{Regexp.escape(name)}/i)
+      end
+      
+      # Paginación
+      if page && step
+        begin
+          page_int = Integer(page)
+          step_int = Integer(step)
+          
+          if page_int <= 0 || step_int <= 0
+            raise ArgumentError, "Los valores de paginación deben ser mayores a cero"
+          end
+          
+          # Contar total de documentos
+          total = query.count
+          
+          # Calcular offset y limit
+          offset = (page_int - 1) * step_int
+          assets = query.skip(offset).limit(step_int).to_a
+          
+          # Calcular páginas totales
+          pages = (total.to_f / step_int).ceil
+          
+          response = {
+            list: assets,
+            pages: pages,
+            total: total,
+            offset: offset
+          }
+        rescue ArgumentError => e
+          status = 400
+          response = {
+            error: "Error al leer los parámetros de la paginación",
+            message: e.message
+          }
+        rescue => e
+          puts "Error de paginación: #{e.message}"
+          puts e.backtrace
+          status = 500
+          response = {
+            error: "Error al procesar la paginación",
+            message: e.message
+          }
+        end
+      else
+        # Sin paginación - devolver todos los resultados
+        assets = query.to_a
+        response = assets
+      end
+      
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      status = 500
+      response = {
+        message: 'Ocurrió un error al listar los assets',
+        error: e.message
+      }
+    end
+    
     # response
     content_type :json
     status status
@@ -72,9 +155,7 @@ class TagController < ApplicationController
       tag.created = Time.now
       tag.updated = Time.now
       tag.save
-      response = {
-        _id: tag.id.to_s
-      }
+      response = tag
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -102,9 +183,7 @@ class TagController < ApplicationController
         tag.name = request_body['name']
         tag.updated = Time.now
         tag.save
-        response = {
-          _id: tag.id.to_s
-        }
+        response = tag
       else
         status = 404
         response = {
