@@ -45,7 +45,7 @@ class IssueController < ApplicationController
     end
   end
 
-  get '/api/v1/issues/summary' do
+  get '/api/v0.5/issues/summary' do
     # request
     response = {}
     status = 200
@@ -65,6 +65,181 @@ class IssueController < ApplicationController
     content_type :json
     status status
     response.to_json
+  end
+
+  get '/api/v1/issues/summary' do
+    # request
+    response = {}
+    status = 200
+    
+    # Obtener parámetros de consulta
+    name = params[:name]
+    state_id = params[:issueStateId]
+    priority_id = params[:priorityId]
+    reported_from = params[:initDate] # fecha inferior
+    reported_to = params[:endDate]     # fecha superior
+    page = params[:page]
+    step = params[:step]
+    
+    # blogic
+    begin
+      # Construir pipeline base
+      pipeline = []
+      
+      # Etapa de match para filtros
+      match_stage = {}
+      
+      # Filtro por nombre (resume)
+      if name && !name.empty?
+        match_stage['resume'] = /#{Regexp.escape(name)}/i
+      end
+      
+      # Filtro por estado
+      if state_id && !state_id.empty?
+        begin
+          match_stage['issue_state_id'] = BSON::ObjectId.from_string(state_id)
+        rescue BSON::Error::InvalidObjectId
+          status = 400
+          response = {
+            error: "ID de estado inválido",
+            message: "El ID de estado proporcionado no es válido"
+          }
+          raise "Invalid state_id"
+        end
+      end
+      
+      # Filtro por prioridad
+      if priority_id && !priority_id.empty?
+        begin
+          match_stage['priority_id'] = BSON::ObjectId.from_string(priority_id)
+        rescue BSON::Error::InvalidObjectId
+          status = 400
+          response = {
+            error: "ID de prioridad inválido",
+            message: "El ID de prioridad proporcionado no es válido"
+          }
+          raise "Invalid priority_id"
+        end
+      end
+      
+      # Filtros por rango de fechas
+      date_conditions = {}
+      if reported_from && !reported_from.empty?
+        begin
+          from_date = DateTime.parse(reported_from)
+          date_conditions['$gte'] = from_date
+        rescue ArgumentError
+          status = 400
+          response = {
+            error: "Fecha 'reported_from' inválida",
+            message: "El formato de fecha debe ser YYYY-MM-DD o YYYY-MM-DD HH:MM:SS"
+          }
+          raise "Invalid reported_from date"
+        end
+      end
+      
+      if reported_to && !reported_to.empty?
+        begin
+          to_date = DateTime.parse(reported_to)
+          date_conditions['$lte'] = to_date
+        rescue ArgumentError
+          status = 400
+          response = {
+            error: "Fecha 'reported_to' inválida",
+            message: "El formato de fecha debe ser YYYY-MM-DD o YYYY-MM-DD HH:MM:SS"
+          }
+          raise "Invalid reported_to date"
+        end
+      end
+      
+      if date_conditions.any?
+        match_stage['reportered'] = date_conditions
+      end
+      
+      # Agregar etapa de match si hay filtros
+      unless match_stage.empty?
+        pipeline << { '$match' => match_stage }
+      end
+      
+      # Agregar el pipeline de summary_list
+      pipeline += Issue.summary_list_pipeline
+      
+      # Paginación
+      if page && step
+        begin
+          page_int = Integer(page)
+          step_int = Integer(step)
+          
+          if page_int <= 0 || step_int <= 0
+            raise ArgumentError, "Los valores de paginación deben ser mayores a cero"
+          end
+          
+          # Para contar total con los mismos filtros, necesitamos ejecutar una consulta separada
+          count_pipeline = []
+          unless match_stage.empty?
+            count_pipeline << { '$match' => match_stage }
+          end
+          count_pipeline << { '$count' => 'total' }
+          
+          count_result = Issue.collection.aggregate(count_pipeline).first
+          total = count_result ? count_result['total'] : 0
+          
+          # Agregar skip y limit al pipeline principal
+          pipeline << { '$skip' => (page_int - 1) * step_int }
+          pipeline << { '$limit' => step_int }
+          
+          # Ejecutar consulta paginada
+          issues = Issue.collection.aggregate(pipeline).to_a
+          
+          # Calcular páginas totales
+          pages = (total.to_f / step_int).ceil
+          
+          response = {
+            list: issues,
+            pages: pages,
+            total: total,
+            offset: (page_int - 1) * step_int
+          }
+        rescue ArgumentError => e
+          status = 400
+          response = {
+            error: "Error al leer los parámetros de la paginación",
+            message: e.message
+          }
+        rescue => e
+          unless response.key?(:error) # Solo si no fue un error ya manejado
+            puts "Error de paginación: #{e.message}"
+            puts e.backtrace
+            status = 500
+            response = {
+              error: "Error al procesar la paginación",
+              message: e.message
+            }
+          end
+        end
+      else
+        # Sin paginación - devolver todos los resultados
+        issues = Issue.collection.aggregate(pipeline).to_a
+        response = issues
+      end
+      
+    rescue => e
+      # Solo manejar errores no manejados previamente
+      if status == 200 # Si no se ha establecido un status de error
+        puts "Error: #{e.message}"
+        puts e.backtrace
+        status = 500
+        response = {
+          message: 'Ocurrió un error al listar las incidencias',
+          error: e.message
+        }
+      end
+    end
+    
+    # response
+    content_type :json
+    status status
+    halt response.to_json
   end
 
   get '/api/v1/issues/fetch-one/:_id' do
@@ -239,7 +414,7 @@ class IssueController < ApplicationController
     halt response.to_json
   end
 
-  delete '/apis/v1/issues/:_id' do
+  delete '/api/v1/issues/:_id' do
     # request
     response = {}
     status = 200

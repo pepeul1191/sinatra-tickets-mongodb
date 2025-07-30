@@ -26,9 +26,9 @@ class Issue
     end
   end
 
-  def self.summary_list
-    Issue.collection.aggregate([
-      # Asegura que tags_ids siempre sea array, sin map ni conversión
+def self.summary_list_pipeline
+    [
+      # Asegura que tags_ids siempre sea array
       {
         '$addFields' => {
           'tags_ids' => { '$ifNull' => ['$tags_ids', []] }
@@ -119,8 +119,13 @@ class Issue
           'tags' => 1
         }
       }
-    ])
-  end  
+    ]
+  end
+  
+  # Método original mantenido para compatibilidad
+  def self.summary_list
+    collection.aggregate(summary_list_pipeline)
+  end
 
   def self.find_one(issue_id)
     Issue.collection.aggregate([

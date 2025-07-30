@@ -42,9 +42,7 @@ class EmployeeController < ApplicationController
       employee.created = Time.now
       employee.updated = Time.now
       employee.save
-      response = {
-        _id: employee.id.to_s
-      }
+      response = employee
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -105,9 +103,7 @@ class EmployeeController < ApplicationController
         employee.user_id = request_body['user_id']
         employee.updated = Time.now
         employee.save
-        response = {
-          _id: employee.id.to_s
-        }
+        response = employee
       else
         status = 404
         response = {

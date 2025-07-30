@@ -138,9 +138,7 @@ class AssetController < ApplicationController
       asset.created = Time.now
       asset.updated = Time.now
       asset.save
-      response = {
-        _id: asset.id.to_s
-      }
+      response = asset
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -169,9 +167,7 @@ class AssetController < ApplicationController
         asset.description = request_body['description']
         asset.updated = Time.now
         asset.save
-        response = {
-          _id: asset.id.to_s
-        }
+        response = asset
       else
         status = 404
         response = {
