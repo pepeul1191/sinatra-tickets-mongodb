@@ -4,6 +4,7 @@ class Employee
   include Mongoid::Document
   field :names, type: String
   field :last_names, type: String
+  field :image_url, type: String
   field :user_id, type: Integer
   field :created, type: DateTime
   field :updated, type: DateTime

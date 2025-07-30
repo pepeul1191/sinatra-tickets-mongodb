@@ -47,7 +47,7 @@ class AuthController < ApplicationController
       # si existe empleado, continuar
       begin
         token = JWT.encode claims, settings.jwt_secret, 'HS256'
-        { token: token }.to_json
+        { token: token, employee: employee }.to_json
       rescue => e
         puts "Failed to encode JWT: #{e.message}"
         halt 500, { error: 'Failed to generate token' }.to_json
