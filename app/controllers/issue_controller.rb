@@ -67,6 +67,7 @@ class IssueController < ApplicationController
     response.to_json
   end
 
+  # En tu endpoint
   get '/api/v1/issues/summary' do
     # request
     response = {}
@@ -74,12 +75,22 @@ class IssueController < ApplicationController
     
     # Obtener parámetros de consulta
     name = params[:name]
-    state_id = params[:issueStateId]
-    priority_id = params[:priorityId]
-    reported_from = params[:initDate] # fecha inferior
-    reported_to = params[:endDate]     # fecha superior
+    state_id = params[:state_id] || params[:issueStateId]  # Ajustado al nombre del parámetro
+    priority_id = params[:priority_id] || params[:priorityId]  # Ajustado al nombre del parámetro
+    reported_from = params[:reported_from] || params[:initDate]  # Ajustado al nombre del parámetro
+    reported_to = params[:reported_to] || params[:endDate]      # Ajustado al nombre del parámetro
     page = params[:page]
     step = params[:step]
+    
+    # Recibir array de tags
+    selected_tags = params[:selectedTags] || params[:'selectedTags[]'] || []
+    
+    # Asegurarse de que selected_tags sea un array
+    unless selected_tags.is_a?(Array)
+      selected_tags = [selected_tags]
+    end
+    
+    puts "Selected tags: #{selected_tags.inspect}"  # Para debugging
     
     # blogic
     begin
@@ -119,6 +130,24 @@ class IssueController < ApplicationController
             message: "El ID de prioridad proporcionado no es válido"
           }
           raise "Invalid priority_id"
+        end
+      end
+      
+      # Filtro por tags (array de ObjectIds)
+      if selected_tags.any? && selected_tags.first != ""  # Verificar que no esté vacío
+        tag_object_ids = []
+        selected_tags.each do |tag_id|
+          next if tag_id.empty?  # Saltar IDs vacíos
+          begin
+            tag_object_ids << BSON::ObjectId.from_string(tag_id)
+          rescue BSON::Error::InvalidObjectId
+            # Puedes ignorar IDs inválidos o devolver error
+            # Aquí los ignoro
+          end
+        end
+        
+        unless tag_object_ids.empty?
+          match_stage['tags_ids'] = { '$in' => tag_object_ids }
         end
       end
       
